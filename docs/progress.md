@@ -1,6 +1,6 @@
 # DeepFakeAgent 后端设计 — 进度日志
 
-## 2026-05-05 会话记录
+## 2026-05-05 会话记录（设计阶段）
 
 ### 已完成的探索
 - [x] 阅读 `requirement/requirement.md` — 理解完整需求文档（7大模块）
@@ -14,22 +14,31 @@
 - [x] 创建规划文件（task_plan.md / findings.md / progress.md）
 - [x] 技术选型确认：Python + FastAPI + Celery + PostgreSQL + WebSocket
 - [x] 编写 API 接口设计文档 → `docs/api-design.md`
-  - 7 个 RESTful 端点 + WebSocket 协议
-  - 完整请求/响应示例
-  - 错误码体系
-  - 时序图
 - [x] 编写后端架构实现文档 → `docs/backend-architecture.md`
-  - 10 章完整架构设计
-  - 6 张数据库表 DDL + ER 关系
-  - 5 个 Agent 的实现要点（含伪代码）
-  - Celery 异步任务 + 状态机
-  - WebSocket 连接管理器设计
-  - Docker Compose 部署模板
 
-### 交付物清单
-| 文件 | 内容 | 状态 |
-|------|------|------|
-| `docs/api-design.md` | RESTful API + WebSocket 接口文档 | ✅ 完成 |
-| `docs/backend-architecture.md` | 后端架构实现文档（含DB、Agent、任务、部署） | ✅ 完成 |
-| `findings.md` | 前端现状梳理 + 技术选型决策 | ✅ 完成 |
-| `task_plan.md` | 任务计划（5阶段，全部完成） | ✅ 完成 |
+---
+
+## 2026-05-06 会话记录（后端实现讨论）
+
+### 讨论要点
+- [x] MVP 策略确认：先壳后芯（API 壳 + Mock 引擎）
+- [x] 技术栈简化：SQLite 替 PostgreSQL，asyncio 替 Celery，FastAPI 直推送替 Redis Pub/Sub
+
+### 实现结果
+- [x] 创建 `backend/` 完整项目结构（18 个文件）
+- [x] 图像上传/列表/详情/删除 API
+- [x] 检测任务创建/查询/列表/取消 API
+- [x] Mock 检测引擎（5 个 Agent + Orchestrator）
+- [x] WebSocket 实时进度推送
+- [x] JSON / PDF 报告导出
+- [x] 验证通过：quick 模式 ~2s（1 Agent），deep 模式 ~9s（5 Agent）
+
+### 验证结果
+- `POST /api/v1/images/upload` — ✅ 上传成功，自动生成缩略图
+- `POST /api/v1/detections` (quick) — ✅ 1 Agent，~2s，结果正确
+- `POST /api/v1/detections` (deep) — ✅ 5 Agent 串行，~9s，结果正确
+- `GET /api/v1/detections/{id}` — ✅ 实时状态查询
+- `GET /api/v1/detections/{id}/export/json` — ✅ JSON 导出
+- `GET /api/v1/detections/{id}/export/pdf` — ✅ PDF 导出（13KB）
+- `GET /api/v1/detections` — ✅ 分页列表
+

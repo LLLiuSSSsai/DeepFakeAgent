@@ -1,37 +1,42 @@
-# DeepFakeAgent 后端设计 — 任务计划
+# DeepFakeAgent 后端实现 — 任务计划
 
-## 阶段 1：需求分析与技术选型 ✅
-- [x] 梳理前端已有的数据模型和接口期望 → findings.md §1
-- [x] 确定后端技术栈（Python/FastAPI/Celery/PostgreSQL）→ findings.md §2
-- [x] 确定部署架构（Docker Compose 微服务）→ backend-architecture.md §9
-- [x] 产出：技术选型决策记录
+## 当前状态
+- ✅ 前端原型完成（mock 数据驱动）
+- ✅ 需求 + 设计文档完成
+- 🔄 后端 MVP 实现
 
-## 阶段 2：API 接口设计 ✅
-- [x] 图像上传与管理 API → api-design.md §2
-- [x] 检测任务创建与执行 API → api-design.md §3
-- [x] WebSocket 实时进度推送 → api-design.md §4
-- [x] 报告生成与导出 API → api-design.md §5
-- [x] 批量检测 API → api-design.md §6
-- [x] 产出：[完整 API 接口文档](docs/api-design.md)
+## MVP 原则
+- **先壳后芯**：FastAPI + WebSocket 全通，Agent 返回 mock 数据
+- **最小依赖**：SQLite 代替 PostgreSQL，asyncio 代替 Celery，免 Redis
+- **快速验证**：前端能立刻对接真实 API，链路通畅后再逐个实现 Agent
 
-## 阶段 3：数据库设计 ✅
-- [x] 图像元数据模型（images 表）→ backend-architecture.md §2.2
-- [x] 检测任务与步骤模型（detection_tasks, detection_steps）
-- [x] 检测结果与异常证据模型（agent_results, anomaly_evidences）
-- [x] 批量任务模型（batch_tasks, batch_items）
-- [x] 产出：数据库 ER 图与表结构 → backend-architecture.md §2
+---
 
-## 阶段 4：后端架构实现文档 ✅
-- [x] 项目结构与模块划分 → backend-architecture.md §1
-- [x] Agent 编排引擎设计（Supervisor + 5个专项Agent）→ §4
-- [x] 异步任务队列与状态机设计 → §5
-- [x] WebSocket 实时推送机制 → §6
-- [x] 文件存储与处理方案 → §7
-- [x] 报告生成引擎设计 → §8
-- [x] 部署架构 → §9
-- [x] 产出：[后端架构实现文档](docs/backend-architecture.md)
+## 阶段 1：后端骨架 + 图像管理 API
+- [ ] 创建 backend/ 项目结构
+- [ ] FastAPI 应用入口 + 配置管理
+- [ ] SQLite + SQLAlchemy（保持与 PostgreSQL 的兼容性）
+- [ ] 图像上传 / 列表 / 详情 / 删除 API
+- [ ] 文件存储（本地 storage/ 目录）
+- [ ] 统一响应信封 + 错误处理
 
-## 阶段 5：最终交付 ✅
-- [x] API 接口文档（面向前端开发）→ [docs/api-design.md](docs/api-design.md)
-- [x] 后端架构实现文档（面向后端开发）→ [docs/backend-architecture.md](docs/backend-architecture.md)
-- [x] 数据模型定义与前端类型对齐 → findings.md §1
+## 阶段 2：检测 API + Mock 引擎
+- [ ] 检测任务创建 / 状态查询 / 列表 API
+- [ ] Agent 基类 + 5 个 Mock Agent
+- [ ] Orchestrator 编排（串行执行 + 加权融合）
+- [ ] 检测结果 mock 数据（复用前端 DETECTION_STEPS）
+
+## 阶段 3：WebSocket 实时推送
+- [ ] WebSocket 端点 /ws/detections/{id}
+- [ ] 检测进度实时推送（step_started / step_completed / detection_completed）
+- [ ] 连接管理器
+
+## 阶段 4：报告导出
+- [ ] Markdown 报告生成
+- [ ] PDF 导出（WeasyPrint）
+- [ ] JSON 导出
+
+## 阶段 5：前端对接（后续）
+- [ ] 替换 uploadStore → 真实 API 上传
+- [ ] 替换 detectionStore → WebSocket + API 查询
+- [ ] 替换导出按钮 → 真实导出端点
